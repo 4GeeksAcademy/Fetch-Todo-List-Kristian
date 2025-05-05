@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const TodoList = () => {
 	const [task, setTask] = useState("");
@@ -32,7 +32,16 @@ const TodoList = () => {
 	const getTasks = () => {
 		fetch(url)
 		.then(res => res.json())
-		.then(data => setList(data))
+		.then(data => {
+			if (Array.isArray(data)) {
+				setList(data);
+			} else if (Array.isArray(data.todos)) {
+				setList(data.todos);
+			} else {
+				console.error("Unexpected data structure:", data);
+				setList([]);
+			}
+		})
 		.catch(err => console.error("There was an error getting tasks:", err));
 	};
 
@@ -45,6 +54,12 @@ const TodoList = () => {
 		.then(() => setList(newList))
 		.catch(err => console.error("There was an error updating tasks:", err));
 	};
+
+	useEffect(() => {
+		if (isUserCreated) {
+			getTasks();
+		}
+	}, [isUserCreated]);
 
 	return (
 		<div>
@@ -86,7 +101,7 @@ const TodoList = () => {
 						<ul>
 							{list.map((item, index) => (
 								<li key={index} className="kris-li">
-									{item}
+									{item.label}
 									<button
 										type="button"
 										className="float-end kris-button"
