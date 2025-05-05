@@ -5,11 +5,46 @@ const TodoList = () => {
 	const [list, setList] = useState([]);
 	const [username, setUsername] = useState("");
 	const [isUserCreated, setIsUserCreated] = useState(false);
+	const url = `https://playground.4geeks.com/todo/users/${username}`;
 
 	const handleDelete = (indexToDelete) => {
 		const updatedList = list.filter((_, index) => index !== indexToDelete);
 		setList(updatedList);
-	}
+	};
+
+	const handleCreateUser = () => {
+		fetch(url, {
+			method: "POST",
+			body: JSON.stringify([]),
+			headers: { "Content-Type": "application/json" }
+		})
+		.then(res => {
+			if (res.ok) {
+				setIsUserCreated(true);
+				getTasks();
+			} else {
+				alert("This user is already created");
+			}
+		})
+		.catch(err => console.error("There was an error creating user:", err));
+	};
+
+	const getTasks = () => {
+		fetch(url)
+		.then(res => res.json())
+		.then(data => setList(data))
+		.catch(err => console.error("There was an error getting tasks:", err));
+	};
+
+	const updateTasks = (newList) => {
+		fetch(url, {
+			method: "PUT",
+			body: JSON.stringify(newList),
+			headers: { "Content-Type": "application/json" }
+		})
+		.then(() => setList(newList))
+		.catch(err => console.error("There was an error updating tasks:", err));
+	};
 
 	return (
 		<div>
@@ -33,7 +68,8 @@ const TodoList = () => {
 					onSubmit={(e) => {
 						e.preventDefault();
 						if (task.trim() === "") return;
-						setList([...list, task]);
+						const newList = [...list, { label: task, done: false }];
+						updateTasks(newList);
 						setTask("");
 					}}
 				>
