@@ -9,7 +9,7 @@ const TodoList = () => {
 
 	const handleDelete = (indexToDelete) => {
 		const updatedList = list.filter((_, index) => index !== indexToDelete);
-		setList(updatedList);
+		updateTasks(updatedList);
 	};
 
 	const handleCreateUser = () => {
@@ -50,7 +50,7 @@ const TodoList = () => {
 		<div>
 			{!isUserCreated && (
 				<div>
-					<h2 className="d-flex justify-content-center">Create your username:</h2>
+					<h2 className="d-flex justify-content-center">Create or enter your username:</h2>
 					<div className="kris-card">
 						<input
 							type="text"
@@ -58,17 +58,19 @@ const TodoList = () => {
 							value={username}
 							onChange={(e) => setUsername(e.target.value)}
 						/>
-						<button onClick={handleCreateUser}>Create User</button>
+					</div>
+					<div className="d-flex justify-content-center">
+						<button className="btn m-2 black" onClick={handleCreateUser}>Let's go</button>
 					</div>
 				</div>
-			)};
+			)}
 
 			{isUserCreated && (
 				<form
 					onSubmit={(e) => {
 						e.preventDefault();
 						if (task.trim() === "") return;
-						const newList = [...list, { label: task, done: false }];
+						const newList = [...list, { label: task, is_done: false }];
 						updateTasks(newList);
 						setTask("");
 					}}
@@ -99,7 +101,7 @@ const TodoList = () => {
 						</ul>
 					</div>
 				</form>
-			)};
+			)}
 		</div>	
 	);
 };
