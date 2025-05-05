@@ -84,7 +84,15 @@ const TodoList = () => {
 						<ul>
 							{list.map((item, index) => (
 								<li key={index} className="kris-li">
-									{item} <button type="button" className="float-end kris-button" value={task} onClick={() => handleDelete(index)}>X</button>
+									{item}
+									<button
+										type="button"
+										className="float-end kris-button"
+										value={task}
+										onClick={() => handleDelete(index)}
+									>
+										X
+									</button>
 								</li>
 							))}
 							<li className="kris-li">{list.length} item left</li>
