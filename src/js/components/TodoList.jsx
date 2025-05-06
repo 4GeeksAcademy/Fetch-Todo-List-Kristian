@@ -7,9 +7,12 @@ const TodoList = () => {
 	const [isUserCreated, setIsUserCreated] = useState(false);
 	const url = `https://playground.4geeks.com/todo/users/${username}`;
 
-	const handleDelete = (indexToDelete) => {
-		const updatedList = list.filter((_, index) => index !== indexToDelete);
-		updateTasks(updatedList);
+	const handleDelete = (taskId) => {
+		fetch(`https://playground.4geeks.com/todo/todos/${taskId}`, {
+			method: "DELETE"
+		})
+		.then(() => getTasks())
+		.catch(err => console.error("There was an error deleting task:", err));
 	};
 
 	const handleCreateUser = () => {
@@ -24,6 +27,8 @@ const TodoList = () => {
 				getTasks();
 			} else {
 				alert("This user is already created");
+				setIsUserCreated(true);
+				getTasks();
 			}
 		})
 		.catch(err => console.error("There was an error creating user:", err));
@@ -45,14 +50,17 @@ const TodoList = () => {
 		.catch(err => console.error("There was an error getting tasks:", err));
 	};
 
-	const updateTasks = (newList) => {
-		fetch(url, {
-			method: "PUT",
-			body: JSON.stringify(newList),
+	const createTask = (taskLabel) => {
+		fetch(`https://playground.4geeks.com/todo/todos/${username}`, {
+			method: "POST",
+			body: JSON.stringify({ label: taskLabel, is_done: false }),
 			headers: { "Content-Type": "application/json" }
 		})
-		.then(() => setList(newList))
-		.catch(err => console.error("There was an error updating tasks:", err));
+		.then(() => {
+			setTask("");
+			getTasks();
+		})
+		.catch(err => console.error("There was an error creating task:", err));
 	};
 
 	useEffect(() => {
@@ -85,9 +93,7 @@ const TodoList = () => {
 					onSubmit={(e) => {
 						e.preventDefault();
 						if (task.trim() === "") return;
-						const newList = [...list, { label: task, is_done: false }];
-						updateTasks(newList);
-						setTask("");
+						createTask(task);
 					}}
 				>
 					<h1 className="d-flex justify-content-center">Todo List!</h1>
@@ -99,14 +105,14 @@ const TodoList = () => {
 							onChange={(e) => setTask(e.target.value)}
 						/>
 						<ul>
-							{list.map((item, index) => (
-								<li key={index} className="kris-li">
+							{list.map((item) => (
+								<li key={item.id} className="kris-li">
 									{item.label}
 									<button
 										type="button"
 										className="float-end kris-button"
 										value={task}
-										onClick={() => handleDelete(index)}
+										onClick={() => handleDelete(item.id)}
 									>
 										X
 									</button>

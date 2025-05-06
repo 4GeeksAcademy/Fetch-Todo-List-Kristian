@@ -72,3 +72,7 @@ ul > li:last-child {
     background-color: black;
     color: white;
 }
+.black:hover{
+    background-color: white;
+    color: black;
+}
