@@ -5,7 +5,6 @@ const TodoList = () => {
 	const [list, setList] = useState([]);
 	const [username, setUsername] = useState("");
 	const [isUserCreated, setIsUserCreated] = useState(false);
-	const url = `https://playground.4geeks.com/todo/users/${username}`;
 
 	const handleDelete = (taskId) => {
 		fetch(`https://playground.4geeks.com/todo/todos/${taskId}`, {
@@ -16,7 +15,7 @@ const TodoList = () => {
 	};
 
 	const handleCreateUser = () => {
-		fetch(url, {
+		fetch(`https://playground.4geeks.com/todo/users/${username}`, {
 			method: "POST",
 			body: JSON.stringify([]),
 			headers: { "Content-Type": "application/json" }
@@ -35,7 +34,7 @@ const TodoList = () => {
 	};
 
 	const getTasks = () => {
-		fetch(url)
+		fetch(`https://playground.4geeks.com/todo/users/${username}`)
 		.then(res => res.json())
 		.then(data => {
 			if (Array.isArray(data)) {
